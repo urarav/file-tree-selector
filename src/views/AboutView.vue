@@ -1,8 +1,18 @@
 <template>
   <div class="box">
-    <el-tree class="box-left" @contextmenu.prevent="handleNotifyMenu" :data="categoryData" node-key="id"
-      :expand-on-click-node="false" :props="defaultProps" @node-click="handleNodeClick" />
-    <span class="box-right" v-html="selectedData.map(it => `${it.data.name}--${it.data.id}`).join('<br>')"></span>
+    <el-tree
+      class="box-left"
+      @contextmenu.prevent="handleNotifyMenu"
+      :data="categoryData"
+      node-key="id"
+      :expand-on-click-node="false"
+      :props="defaultProps"
+      @node-click="handleNodeClick"
+    />
+    <span
+      class="box-right"
+      v-html="selectedData.map((it) => `${it.data.name}--${it.data.id}`).join('<br>')"
+    ></span>
     <ul class="list" ref="listRef" @click="handleClickListItem">
       <li class="list-item">操作1</li>
       <li class="list-item">操作2</li>
@@ -13,16 +23,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import type Node from 'element-plus/es/components/tree/src/model/node'
-import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type';
+import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 
 type Tree = {
-  name: string,
-  checked?: boolean,
-  id: number,
-  path: string,
+  name: string
+  checked?: boolean
+  id: number
+  path: string
   children: Tree[]
 }
 const listRef = ref<HTMLElement | null>(null)
@@ -45,13 +55,13 @@ const handleNodeClick = (_data: Tree, node: Node) => {
     if (recordStack.includes(node)) return
     recordStack.splice(1, 1, node)
     const [firstEle, secondEle] = recordStack
-    const firstEleIdx = siblings.findIndex(ele => ele.id === firstEle?.id),
-      secondEleIdx = siblings.findIndex(ele => ele.id === secondEle?.id)
+    const firstEleIdx = siblings.findIndex((ele) => ele.id === firstEle?.id),
+      secondEleIdx = siblings.findIndex((ele) => ele.id === secondEle?.id)
     const startIndex = Math.min(firstEleIdx, secondEleIdx),
       endIndex = Math.max(firstEleIdx, secondEleIdx)
     const temp = []
     for (let i = 0; i < siblings.length; i++) {
-      const { data, childNodes } = siblings[i];
+      const { data, childNodes } = siblings[i]
       const flag = i >= startIndex && i <= endIndex
       if (flag) {
         data.checked = true
@@ -66,8 +76,8 @@ const handleNodeClick = (_data: Tree, node: Node) => {
   } else {
     recordStack.splice(0, 2, node, null)
     if (ctrlDown) {
-      _data.checked = !_data.checked;
-      const flag = selectedData.value.findIndex(t => t.data.id === _data.id)
+      _data.checked = !_data.checked
+      const flag = selectedData.value.findIndex((t) => t.data.id === _data.id)
       if (!~flag) {
         selectedData.value.push(node)
         hasChildNodes && handleChildNodes(node.childNodes, true)
@@ -77,7 +87,7 @@ const handleNodeClick = (_data: Tree, node: Node) => {
       }
     } else {
       for (let i = 0; i < siblings.length; i++) {
-        const { data, childNodes } = siblings[i];
+        const { data, childNodes } = siblings[i]
         if (data.id === _data.id) {
           data.checked = true
           selectedData.value = Array.of(toRaw(siblings[i]))
@@ -92,7 +102,7 @@ const handleNodeClick = (_data: Tree, node: Node) => {
 }
 
 const handleChildNodes = (childNodes: Node[], checked = false, o = selectedData.value) => {
-  childNodes.forEach(t => {
+  childNodes.forEach((t) => {
     t.data.checked = checked
     if (t.childNodes.length) {
       handleChildNodes(t.childNodes, checked)
@@ -100,7 +110,7 @@ const handleChildNodes = (childNodes: Node[], checked = false, o = selectedData.
     if (checked) {
       o.push(t)
     } else {
-      const idx = o.findIndex(it => it.data.id === t.data.id)
+      const idx = o.findIndex((it) => it.data.id === t.data.id)
       if (~idx) {
         o.splice(idx, 1)
       }
@@ -110,10 +120,15 @@ const handleChildNodes = (childNodes: Node[], checked = false, o = selectedData.
 
 const checkDir = (currentNode: Node) => {
   const [fe, se] = recordStack
-  const currentDirIdList = currentNode.parent.childNodes.map(t => t.data.id)
-  if (Array.of(fe?.data.id, se?.data.id).filter(Boolean).some(t => !currentDirIdList.includes(t)) || (!shiftDown && !ctrlDown)) {
-    selectedData.value.forEach(item => {
-      item.data.checked = false;
+  const currentDirIdList = currentNode.parent.childNodes.map((t) => t.data.id)
+  if (
+    Array.of(fe?.data.id, se?.data.id)
+      .filter(Boolean)
+      .some((t) => !currentDirIdList.includes(t)) ||
+    (!shiftDown && !ctrlDown)
+  ) {
+    selectedData.value.forEach((item) => {
+      item.data.checked = false
       item.childNodes.length && handleChildNodes(item.childNodes, false)
     })
     selectedData.value.length = 0
@@ -131,22 +146,23 @@ const categoryData: Tree[] = reactive([
   }
 ])
 
-
 const instance = axios.create({
-  baseURL: 'https://mes.kfbio.cn:9001',
+  baseURL: 'xxx',
   headers: {
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyMDMxMjksIm5iZiI6MTY5MzIwMzEyOSwiZXhwIjoxNjkzMjE1MTI5LCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ARMu1KKNJ1EsCbrg7fdXEp1Lakv7i3GAxjVUXIhDNRE'
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyMDMxMjksIm5iZiI6MTY5MzIwMzEyOSwiZXhwIjoxNjkzMjE1MTI5LCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ARMu1KKNJ1EsCbrg7fdXEp1Lakv7i3GAxjVUXIhDNRE'
   }
 })
 
 interface IResponseData<T = any> {
-  code: number,
-  data: T,
-  success: boolean,
-  message: string,
+  code: number
+  data: T
+  success: boolean
+  message: string
   [key: string]: any
 }
-const fetch = async () => (await instance.get<IResponseData<Tree[]>>('/api/documentFolder/list')).data
+const fetch = async () =>
+  (await instance.get<IResponseData<Tree[]>>('/api/documentFolder/list')).data
 
 fetch().then(({ data, success }) => {
   if (success && data) {
@@ -218,16 +234,16 @@ onUnmounted(() => {
   user-select: none;
 
   &.is-selected {
-    >.el-tree-node__content {
+    > .el-tree-node__content {
       background-color: var(--el-color-primary-light-9);
     }
 
-    >.el-tree-node__content:hover {
+    > .el-tree-node__content:hover {
       background-color: var(--el-color-primary-light-9);
     }
 
     &:focus {
-      >.el-tree-node__content {
+      > .el-tree-node__content {
         background-color: var(--el-color-primary-light-9);
       }
     }
@@ -241,14 +257,14 @@ onUnmounted(() => {
   border-radius: 5px;
   background-color: #fff;
   padding: 0;
-  box-shadow: 0 0 3px 0 rgba(0, 0, 0, .2);
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.2);
   visibility: hidden;
 
   &-item {
     width: 100px;
     padding: 5px 10px;
     text-align: center;
-    transition: background-color .25s ease-in;
+    transition: background-color 0.25s ease-in;
 
     &:hover {
       background-color: var(--el-color-primary-light-9);

@@ -1,8 +1,17 @@
 <template>
   <div class="box">
-    <el-tree class="box-left" @click.right.prevent="handleNotifyMenu" :data="categoryData" node-key="id"
-      :expand-on-click-node="false" :props="defaultProps" lazy :load="handleLoadNode" @node-click="handleNodeClick" />
-    <span class="box-right" v-html="selectedData.map(it => it.id).join('<br>')"></span>
+    <el-tree
+      class="box-left"
+      @click.right.prevent="handleNotifyMenu"
+      :data="categoryData"
+      node-key="id"
+      :expand-on-click-node="false"
+      :props="defaultProps"
+      lazy
+      :load="handleLoadNode"
+      @node-click="handleNodeClick"
+    />
+    <span class="box-right" v-html="selectedData.map((it) => it.id).join('<br>')"></span>
     <ul class="list" ref="listRef" @click="handleClickListItem">
       <li class="list-item">操作1</li>
       <li class="list-item">操作2</li>
@@ -13,19 +22,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import type Node from 'element-plus/es/components/tree/src/model/node'
-import type { LoadFunction } from 'element-plus/es/components/tree/src/tree.type';
+import type { LoadFunction } from 'element-plus/es/components/tree/src/tree.type'
 
-type Tree = {
-  label: string
-  checked?: boolean,
-  id: string,
-  children?: Tree[]
-} | {
-  [key: string]: any
-}
+type Tree =
+  | {
+      label: string
+      checked?: boolean
+      id: string
+      children?: Tree[]
+    }
+  | {
+      [key: string]: any
+    }
 const listRef = ref<HTMLElement | null>(null)
 
 const handleNotifyMenu = ({ clientX, clientY }: PointerEvent) => {
@@ -44,13 +55,13 @@ const handleNodeClick = (_data: Tree, node: Node) => {
     if (recordStack.includes(node)) return
     recordStack.splice(1, 1, node)
     const [firstEle, secondEle] = recordStack
-    const firstEleIdx = siblings.findIndex(ele => ele.id === firstEle?.id),
-      secondEleIdx = siblings.findIndex(ele => ele.id === secondEle?.id)
+    const firstEleIdx = siblings.findIndex((ele) => ele.id === firstEle?.id),
+      secondEleIdx = siblings.findIndex((ele) => ele.id === secondEle?.id)
     const startIndex = Math.min(firstEleIdx, secondEleIdx),
       endIndex = Math.max(firstEleIdx, secondEleIdx)
     const temp = []
     for (let i = 0; i < siblings.length; i++) {
-      const { data } = siblings[i];
+      const { data } = siblings[i]
       const flag = i >= startIndex && i <= endIndex
       if (flag) {
         data.checked = true
@@ -63,17 +74,17 @@ const handleNodeClick = (_data: Tree, node: Node) => {
   } else {
     recordStack.splice(0, 2, node, null)
     if (ctrlDown) {
-      _data.checked = !_data.checked;
-      const flag = selectedData.value.findIndex(t => t.id === _data.id)
+      _data.checked = !_data.checked
+      const flag = selectedData.value.findIndex((t) => t.id === _data.id)
       if (!~flag) {
         selectedData.value.push(_data)
-        console.log(selectedData.value);
+        console.log(selectedData.value)
       } else {
         selectedData.value.splice(flag, 1)
       }
     } else {
       for (let i = 0; i < siblings.length; i++) {
-        const { data } = siblings[i];
+        const { data } = siblings[i]
         if (data.id === _data.id) {
           data.checked = true
           selectedData.value = Array.of(data)
@@ -87,9 +98,13 @@ const handleNodeClick = (_data: Tree, node: Node) => {
 
 const checkDir = (siblings: Node[]) => {
   const [fe, se] = recordStack
-  const currentDirIdList = siblings.map(t => t.data.id)
-  if (Array.of(fe?.data.id, se?.data.id).filter(Boolean).some(t => !currentDirIdList.includes(t))) {
-    selectedData.value.forEach(item => void (item.checked = false))
+  const currentDirIdList = siblings.map((t) => t.data.id)
+  if (
+    Array.of(fe?.data.id, se?.data.id)
+      .filter(Boolean)
+      .some((t) => !currentDirIdList.includes(t))
+  ) {
+    selectedData.value.forEach((item) => void (item.checked = false))
     selectedData.value.length = 0
     recordStack.splice(0, 2, null)
   }
@@ -103,39 +118,49 @@ const categoryData: Tree[] = reactive([
   }
 ])
 
-
 const instance = axios.create({
-  baseURL: 'https://mes.kfbio.cn:9001',
+  baseURL: 'xxx',
   headers: {
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyMDMxMjksIm5iZiI6MTY5MzIwMzEyOSwiZXhwIjoxNjkzMjE1MTI5LCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ARMu1KKNJ1EsCbrg7fdXEp1Lakv7i3GAxjVUXIhDNRE'
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyMDMxMjksIm5iZiI6MTY5MzIwMzEyOSwiZXhwIjoxNjkzMjE1MTI5LCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ARMu1KKNJ1EsCbrg7fdXEp1Lakv7i3GAxjVUXIhDNRE'
   }
 })
 
 interface IResponseData<T = any> {
-  code: number,
-  data: T,
-  success: boolean,
-  message: string,
+  code: number
+  data: T
+  success: boolean
+  message: string
   [key: string]: any
 }
 
 interface IFolders {
-  children: Array<IFolders>,
+  children: Array<IFolders>
   isLeaf?: boolean
 }
-const getDocumentFolderByPid = async (pid: number) => (await instance.get<IResponseData<{
-  folders: Array<IFolders>
-}>>('/api/documentFolder/listByPid', {
-  params: { pid }
-})).data
+const getDocumentFolderByPid = async (pid: number) =>
+  (
+    await instance.get<
+      IResponseData<{
+        folders: Array<IFolders>
+      }>
+    >('/api/documentFolder/listByPid', {
+      params: { pid }
+    })
+  ).data
 
 const handleLoadNode: LoadFunction = async (node, resolve) => {
-  const { level, data: { id } } = node
+  const {
+    level,
+    data: { id }
+  } = node
   if (Object.is(level, 0)) {
     resolve(categoryData)
   } else {
-    const { data: { folders } } = await getDocumentFolderByPid(id)
-    folders.forEach(t => {
+    const {
+      data: { folders }
+    } = await getDocumentFolderByPid(id)
+    folders.forEach((t) => {
       t.isLeaf = !t.children.length
     })
     resolve(folders)
@@ -226,14 +251,14 @@ onUnmounted(() => {
   border-radius: 5px;
   background-color: #fff;
   padding: 0;
-  box-shadow: 0 0 6px 0 rgba(0, 0, 0, .2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
   visibility: hidden;
 
   &-item {
     width: 100px;
     padding: 5px 10px;
     text-align: center;
-    transition: background-color .25s ease-in;
+    transition: background-color 0.25s ease-in;
 
     &:hover {
       background-color: var(--el-color-primary-light-9);
