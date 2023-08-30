@@ -147,10 +147,10 @@ const categoryData: Tree[] = reactive([
 ])
 
 const instance = axios.create({
-  baseURL: 'xxx',
+  baseURL: 'https://mes.kfbio.cn:9001',
   headers: {
     Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyMDMxMjksIm5iZiI6MTY5MzIwMzEyOSwiZXhwIjoxNjkzMjE1MTI5LCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ARMu1KKNJ1EsCbrg7fdXEp1Lakv7i3GAxjVUXIhDNRE'
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiQWNjb3VudCI6ImtmYmlvIiwiTmFtZSI6Iui2hee6p-euoeeQhuWRmCIsIlN1cGVyQWRtaW4iOjEsIlBob25lIjoiMTgwMjAwMzA3MjEiLCJpYXQiOjE2OTMyNjkwNDEsIm5iZiI6MTY5MzI2OTA0MSwiZXhwIjoxNjkzMjgxMDQxLCJpc3MiOiJkaWxvbiIsImF1ZCI6ImRpbG9uIn0.ne-bE7Mi3lU1XgGLpDfR9STeWFINL4rhujc6hXrWa1Y'
   }
 })
 
